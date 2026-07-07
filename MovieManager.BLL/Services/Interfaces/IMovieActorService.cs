@@ -2,6 +2,9 @@ using MovieManager.BLL.Models;
 
 namespace MovieManager.BLL.Services.Interfaces
 {
+    /// <summary>
+    /// Interface for the MovieActorService, which provides methods to manage the relationship between movies and actors.
+    /// </summary>
     public interface IMovieActorService
     {
         Task<MovieActorModel?> GetByIdsAsync(int movieId, int actorId, CancellationToken cancellationToken = default);
