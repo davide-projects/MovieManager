@@ -1,55 +1,53 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MovieManager.BLL.Models;
 using MovieManager.BLL.Services.Interfaces;
-using Scalar.AspNetCore;
 
 namespace MovieManager.PL.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     [Produces("application/json")]
-    public class GenresController : ControllerBase
+    public class ReviewsController : ControllerBase
     {
-        private readonly IGenericService<GenreModel> _genreService;
+        private readonly IGenericService<ReviewModel> _reviewsService;
 
-        public GenresController(IGenericService<GenreModel> genreService)
+        public ReviewsController(IGenericService<ReviewModel> reviewsService)
         {
-            _genreService = genreService;
+            _reviewsService = reviewsService;
         }
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<GenreModel>>> GetAllAsync(
+        public async Task<ActionResult<IEnumerable<ReviewModel>>> GetAllAsync(
             CancellationToken cancellationToken = default)
         {
-            var genres = await _genreService.GetAllAsync(cancellationToken);
-            return Ok(genres);
+            var reviews = await _reviewsService.GetAllAsync(cancellationToken);
+            return Ok(reviews);
         }
 
         [HttpGet("{id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-
-        public async Task<ActionResult<GenreModel>> GetByIdAsync(
+        public async Task<ActionResult<ReviewModel>> GetByIdAsync(
             int id,
             CancellationToken cancellationToken = default)
         {
-            var genre = await _genreService.GetByIdAsync(id, cancellationToken);
-            if (genre == null)
+            var review = await _reviewsService.GetByIdAsync(id, cancellationToken);
+            if (review == null)
             {
                 return NotFound();
             }
-            return Ok(genre);
+            return Ok(review);
         }
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<GenreModel>> CreateAsync(
-            [FromBody] GenreModel model,
+        public async Task<ActionResult<ReviewModel>> CreateAsync(
+            [FromBody] ReviewModel model,
             CancellationToken cancellationToken = default)
         {
-            var created = await _genreService.CreateAsync(model, cancellationToken);
+            var created = await _reviewsService.CreateAsync(model, cancellationToken);
             return CreatedAtAction(nameof(GetByIdAsync), new { id = created.Id }, created);
         }
 
@@ -57,38 +55,39 @@ namespace MovieManager.PL.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-
         public async Task<IActionResult> UpdateAsync(
             int id,
-            [FromBody] GenreModel model,
+            [FromBody] ReviewModel model,
             CancellationToken cancellationToken = default)
         {
             if (model.Id != id)
             {
                 return BadRequest($"Route id ({id}) and body id ({model.Id}) must match.");
             }
-            var updated = await _genreService.UpdateAsync(model, cancellationToken);
+
+            var updated = await _reviewsService.UpdateAsync(model, cancellationToken);
             if (!updated)
             {
                 return NotFound();
             }
+
             return NoContent();
         }
 
         [HttpDelete("{id:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task <IActionResult> DeleteAsync(
+        public async Task<IActionResult> DeleteAsync(
             int id,
             CancellationToken cancellationToken = default)
         {
-            var deleted = await _genreService.DeleteAsync(id, cancellationToken);
+            var deleted = await _reviewsService.DeleteAsync(id, cancellationToken);
             if (!deleted)
             {
                 return NotFound();
             }
+
             return NoContent();
         }
-
     }
 }
